@@ -12,7 +12,7 @@ const Login = () => {
     mutationFn: login,
     onSuccess: (response) => {
       console.log('User login successfully', response)
-      navigate('/currentUser')
+      navigate('/profile')
     },
     onError: (error) => {
       console.log('Login failed', error)
