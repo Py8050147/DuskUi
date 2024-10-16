@@ -15,7 +15,7 @@ import UpdateProduct from "./components/UpdateProduct.jsx";
 import GetProduct from "./components/GetProduct.jsx";
 import Order from "./components/Order.jsx";
 import Address from "./components/Address.jsx";
-import GetAddress from "./components/GetAddress.jsx";
+// import GetAddress from "./components/GetAddress.jsx";
 
 const queryClient = new QueryClient();
 
