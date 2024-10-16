@@ -13,6 +13,9 @@ import ProfilePage from "./components/ProfilePage.jsx";
 import PublishProduct from "./components/PublishProduct.jsx";
 import UpdateProduct from "./components/UpdateProduct.jsx";
 import GetProduct from "./components/GetProduct.jsx";
+import Order from "./components/Order.jsx";
+import Address from "./components/Address.jsx";
+import GetAddress from "./components/GetAddress.jsx";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +59,20 @@ const router = createBrowserRouter([
       {
         path: "products/:productId",
         element: <GetProduct />,
+      },
+      {
+        path: "address",
+        element: <Address />
+
+      },
+      // {
+      //   path: "address/:addressId",
+      //   element: <GetAddress />
+
+      // },
+      {
+        path: "orders/:productId",
+        element: <Order />,
       },
     ],
   },

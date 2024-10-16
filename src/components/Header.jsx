@@ -5,7 +5,7 @@ const  Header = () =>  {
     <div className="conatiner max-w-full px-[97px] ring-1 ring-black">
       <div className="navbar bg-base-100">
         <div className="flex-1">
-          <a className="btn btn-ghost text-xl">V2-cart</a>
+          <Link to={'/'} className="btn btn-ghost text-xl">V2-cart</Link>
         </div>
         <div className="flex-none gap-4">
           <div className="dropdown dropdown-end">

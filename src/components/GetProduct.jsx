@@ -1,19 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
 import { getProductById } from './https/api';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom'; // Use useNavigate instead of Link
 
 const GetProduct = () => {
   const { productId } = useParams(); // Get the productId from the URL params
+  const navigate = useNavigate(); // Use for navigation
 
-  // Fetch all products using react-query
+  // Fetch product by ID using react-query
   const { data, isLoading, error } = useQuery({
-    queryKey: ['products'],  // Change query key to fetch all products
-    queryFn: getProductById, // Adjust this if getProductById only fetches a single product
-    enabled: !!productId,  // Only run query if productId exists
+    queryKey: ['products'], // Query key for caching purposes
+    queryFn: getProductById, // Fetch product by ID
+    enabled: !!productId, // Only run query if productId exists
   });
-
-  // console.log('Fetched Products:', data);
-  // console.log('Product ID:', productId);
 
   // Handling loading state
   if (isLoading) {
@@ -43,6 +41,11 @@ const GetProduct = () => {
     return <div className="text-center">No product found for ID: {productId}</div>;
   }
 
+  // Function to handle order button click and navigate to the order page with product data
+  const handleOrderClick = () => {
+    navigate(`/orders/${productId}`, { state: { product } }); // Pass product data through state
+  };
+
   // Rendering product details in a card layout
   return (
     <div className="container mx-auto p-6">
@@ -50,7 +53,7 @@ const GetProduct = () => {
         <div className="md:flex">
           <div className="md:flex-shrink-0">
             <img
-              className="h-56 w-full object-cover md:w-48"
+              className="h-64 w-full object-cover md:w-48"
               src={product.productImg} // Assuming productImg contains the image URL
               alt={product.name}
             />
@@ -59,6 +62,14 @@ const GetProduct = () => {
             <h1 className="text-2xl font-bold">{product.name || 'N/A'}</h1>
             <p className="mt-2 text-gray-600 text-sm">{product.description || 'N/A'}</p>
             <p className="mt-4 text-lg font-semibold">Price: ${product.price || 'N/A'}</p>
+            <div className="mt-8 flex justify-center mx-auto">
+              <button
+                onClick={handleOrderClick} // Handle order button click
+                className="font-bold text-lg text-blue-900 border border-blue-800 px-4 py-1"
+              >
+                Order
+              </button>
+            </div>
           </div>
         </div>
       </div>

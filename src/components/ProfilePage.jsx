@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getcurrentUser, updateAccount } from "./https/api"; // Ensure the correct import
 
+
 // Fetch current user
 const fetchCurrentUser = async () => {
   const response = await getcurrentUser();
@@ -10,6 +11,7 @@ const fetchCurrentUser = async () => {
 
 const ProfilePage = () => {
   const queryClient = useQueryClient();
+
 
   // Fetch user data using React Query's useQuery
   const { data, isLoading, error } = useQuery({

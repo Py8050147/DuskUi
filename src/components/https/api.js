@@ -54,7 +54,7 @@ export const updateAccount = async (data) =>
     })
 
 export const uploadProduct = async(formData) => {
-    await axios.post('/api/v2/products', formData, {
+   return await axios.post('/api/v2/products', formData, {
         headers: {
             // 'Content-Type': 'application/json',
             // "Content-Encoding": 'mul',
@@ -101,4 +101,52 @@ export const getProductById = async (productId) => {
       },
     });
     return response.data;
-  };
+};
+
+
+export const createAddress = async (data) =>
+    await axios.post('/api/v2/addresses', data, {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        withCredentials: true
+    })
+
+      
+// export const getAddress = async(addressId) => {
+//   const response = await axios.get('/api/v2/addresses', {
+//     params: {
+//         ID: addressId
+//       },
+//        withCredentials: true
+//    })
+//    // console.log(response)
+//    return response.data;
+// }
+export const getAddressId = async (addressId) => {
+    const response = await axios.get('/api/v2/addresses', {
+        params: {
+          ID: addressId
+      },
+    withCredentials: true
+  });
+  console.log(response.data)
+  return response.data;
+};
+
+export const getAddress = async () => {
+      await axios.get('/api/v2/addresses')
+  }
+
+
+
+export const createOrder = async (orderData) => {
+    const response = await axios.post('/api/v2/orders', orderData, {
+        headers: {
+'Content-Type': 'application/json'
+        },
+        withCredentials: true
+    })
+    console.log(response.data)
+    return response.data
+  }

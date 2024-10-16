@@ -8,7 +8,7 @@ const GetAllProduct = () => {
   // Fetch products using useQuery
   const { data, error, isLoading, isError } = useQuery({
     queryKey: ["products"],
-    queryFn: getAllProduct,
+    queryFn:() =>  getAllProduct(),
   });
 
   // Ensure the products are correctly logged
@@ -34,7 +34,7 @@ const GetAllProduct = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.length > 0 ? (
           products.map((product) => (
-            <div key={product.id} className="card w-full bg-base-100 shadow-xl">
+            <div key={product._id} className="card w-full bg-base-100 shadow-xl">
               <figure>
                 <img
                 loading="lazy"
