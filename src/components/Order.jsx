@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'; // Import Stripe elements
 import { createOrder, getProductById, getcurrentUser, getAddressId } from './https/api';
 
 const Order = () => {
-  const { productId } = useParams(); // Assuming `addressId` is removed from params
-  const location = useLocation()
+  const stripe = useStripe();  // Initialize Stripe
+  const elements = useElements(); // Initialize Stripe Elements
+
+  const { productId } = useParams(); 
+  const location = useLocation();
   const [quantity, setQuantity] = useState(1);
   const [selectedAddress, setSelectedAddress] = useState('');
 
@@ -17,7 +21,6 @@ const Order = () => {
     queryFn: () => getProductById(productId),
   });
 
-  console.log(fetchedProduct)
   const product = passedProduct || fetchedProduct;
 
   // Fetch current user data
@@ -26,11 +29,10 @@ const Order = () => {
     queryFn: getcurrentUser,
   });
 
-  console.log(user)
   // Fetch the user's addresses
   const { data: addresses, error: addressError, isLoading: addressLoading } = useQuery({
     queryKey: ['addresses'],
-    queryFn: getAddressId, // Fetch all addresses for the user
+    queryFn: getAddressId,
   });
 
   // Handle order creation
@@ -51,12 +53,31 @@ const Order = () => {
 
   const totalPrice = product.price * quantity;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validate the form
     if (!quantity || !selectedAddress || !user?.data?.data?._id) {
       alert('All fields (quantity, address, and customer) are required.');
+      return;
+    }
+
+    // Validate Stripe Elements (CardElement)
+    if (!stripe || !elements) {
+      alert('Stripe has not loaded yet.');
+      return;
+    }
+
+    // Create a Payment Method using the card details entered in CardElement
+    const cardElement = elements.getElement(CardElement);
+    const { error, paymentMethod } = await stripe.createPaymentMethod({
+      type: 'card', // Corrected: 'type' should be a string
+      card: cardElement,
+    });
+
+    if (error) {
+      console.error(error);
+      alert(error.message);
       return;
     }
 
@@ -66,9 +87,10 @@ const Order = () => {
       orderItems: [{ productId: product._id, quantity }],
       address: selectedAddress, // Pass the selected address ID
       customer: user?.data?.data?._id, // Pass the correct user ID
+      paymentMethodId: paymentMethod.id, // Stripe Payment Method ID
     };
 
-    // Trigger order creation
+    // Trigger order creation and payment
     mutation.mutate(orderData);
   };
 
@@ -95,7 +117,7 @@ const Order = () => {
             className="w-full px-4 py-2 border rounded-md border-gray-300"
           >
             <option value="" disabled>Select an address</option>
-            {addresses?.data?.map((address) => ( // Assuming addresses array is inside `data`
+            {addresses?.data?.map((address) => (
               <option key={address._id} value={address._id}>
                 {address.street}, {address.city}
               </option>
@@ -111,8 +133,14 @@ const Order = () => {
             className="w-full px-4 py-2 border rounded-md border-gray-300"
           />
         </div>
+        <div className="mb-5">
+          <label className="block text-gray-700 font-semibold mb-2">Payment Information</label>
+          <div className="w-full px-4 py-2 border rounded-md border-gray-300">
+            <CardElement />
+          </div>
+        </div>
         <button type="submit" className="bg-blue-600 text-white py-2 rounded-md">
-          Place Order
+          Place Order & Pay
         </button>
       </form>
     </div>
