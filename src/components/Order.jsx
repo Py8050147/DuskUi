@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'; // Import Stripe elements
+import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { createOrder, getProductById, getcurrentUser, getAddressId } from './https/api';
 
 const Order = () => {
-  const stripe = useStripe();  // Initialize Stripe
-  const elements = useElements(); // Initialize Stripe Elements
+  const stripe = useStripe();
+  const elements = useElements();
 
   const { productId } = useParams(); 
   const location = useLocation();
@@ -47,9 +47,9 @@ const Order = () => {
   });
 
   // Loading and error handling
-  if (productLoading || userLoading || addressLoading) return <div>Loading...</div>;
-  if (productError || userError || addressError) return <div>Error loading data</div>;
-  if (!product) return <div>No product data found.</div>;
+  if (productLoading || userLoading || addressLoading) return <div className="text-center py-20">Loading...</div>;
+  if (productError || userError || addressError) return <div className="text-center py-20">Error loading data</div>;
+  if (!product) return <div className="text-center py-20">No product data found.</div>;
 
   const totalPrice = product.price * quantity;
 
@@ -71,7 +71,7 @@ const Order = () => {
     // Create a Payment Method using the card details entered in CardElement
     const cardElement = elements.getElement(CardElement);
     const { error, paymentMethod } = await stripe.createPaymentMethod({
-      type: 'card', // Corrected: 'type' should be a string
+      type: 'card',
       card: cardElement,
     });
 
@@ -85,9 +85,9 @@ const Order = () => {
     const orderData = {
       orderPrice: totalPrice,
       orderItems: [{ productId: product._id, quantity }],
-      address: selectedAddress, // Pass the selected address ID
-      customer: user?.data?.data?._id, // Pass the correct user ID
-      paymentMethodId: paymentMethod.id, // Stripe Payment Method ID
+      address: selectedAddress,
+      customer: user?.data?.data?._id,
+      paymentMethodId: paymentMethod.id,
     };
 
     // Trigger order creation and payment
@@ -95,10 +95,10 @@ const Order = () => {
   };
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center">Order {product.name}</h1>
+    <div className="container mx-auto p-6 max-w-xl">
+      <h1 className="text-3xl font-bold mb-6 text-center">Order for {product.name}</h1>
 
-      <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-white rounded-lg shadow-lg p-8 mt-6 border border-gray-200">
+      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-8 border border-gray-200">
         <div className="mb-5">
           <label className="block text-gray-700 font-semibold mb-2">Quantity</label>
           <input
@@ -106,7 +106,7 @@ const Order = () => {
             min="1"
             value={quantity}
             onChange={(e) => setQuantity(Number(e.target.value))}
-            className="w-full px-4 py-2 border rounded-md border-gray-300"
+            className="w-full px-4 py-2 border rounded-md border-gray-300 focus:outline-none focus:ring focus:ring-blue-500"
           />
         </div>
         <div className="mb-5">
@@ -114,7 +114,7 @@ const Order = () => {
           <select
             value={selectedAddress}
             onChange={(e) => setSelectedAddress(e.target.value)}
-            className="w-full px-4 py-2 border rounded-md border-gray-300"
+            className="w-full px-4 py-2 border rounded-md border-gray-300 focus:outline-none focus:ring focus:ring-blue-500"
           >
             <option value="" disabled>Select an address</option>
             {addresses?.data?.map((address) => (
@@ -130,16 +130,16 @@ const Order = () => {
             type="text"
             value={`$${totalPrice.toFixed(2)}`}
             readOnly
-            className="w-full px-4 py-2 border rounded-md border-gray-300"
+            className="w-full px-4 py-2 border rounded-md text-black border-gray-300 bg-gray-100 cursor-not-allowed"
           />
         </div>
         <div className="mb-5">
           <label className="block text-gray-700 font-semibold mb-2">Payment Information</label>
-          <div className="w-full px-4 py-2 border rounded-md border-gray-300">
+          <div className="w-full px-4 py-2 border rounded-md border-gray-300 bg-gray-50">
             <CardElement />
           </div>
         </div>
-        <button type="submit" className="bg-blue-600 text-white py-2 rounded-md">
+        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-200">
           Place Order & Pay
         </button>
       </form>
@@ -148,3 +148,4 @@ const Order = () => {
 };
 
 export default Order;
+
