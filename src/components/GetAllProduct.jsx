@@ -66,7 +66,7 @@ const GetAllProduct = () => {
       </div>
       <div className="mt-6">
         <button
-          onClick={() => navigate("/create-product")}
+          onClick={() => navigate("/product")}
           className="btn btn-accent"
         >
           Create Product
